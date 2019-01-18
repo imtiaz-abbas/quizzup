@@ -47,8 +47,8 @@ func main() {
 	router := gin.Default()
 	router.Use(gin.Logger())
 	router.GET("/", func(c *gin.Context) { c.JSON(200, gin.H{"message": "OK"}) })
-	router.GET("/products", controllers.GetAllProducts)
-	router.GET("/products/:id", controllers.GetProduct)
+	router.GET("/quizzes", controllers.GetAllQuizzes)
+	router.GET("/quizzes/:id", controllers.GetQuiz)
 
 	router.Run(":" + port)
 }
