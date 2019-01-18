@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${DBUSER}
+      - POSTGRES_PASSWORD=${DBPASSWORD}
+      - POSTGRES_DB=${DBNAME}
+
+  quizzup:
+    image: golang:latest
+    volumes:
+      - .:/go/src/github.com/quizzup
+    env_file: .env
+    command: go run main.go
+    working_dir: /go/src/github.com/quizzup
+    ports:
+      - "8080:8080"
+      - "5000:5000"
+    depends_on:
+      - db
