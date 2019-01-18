@@ -3,9 +3,8 @@ package models
 // AdminUser holds Admin data
 type AdminUser struct {
 	ID          string `json:"id"`
-	FirstName   string `json:"firstName"`
-	LastName    string `json:"lastName"`
-	EmailID     string `json:"emailId"`
+	Name        string `json:"name"`
+	EmailID     string `json:"email_id"`
 	Password    string `json:"password"`
-	PhoneNumber string `json:"phoneNumber"`
+	PhoneNumber string `json:"phone_number"`
 }

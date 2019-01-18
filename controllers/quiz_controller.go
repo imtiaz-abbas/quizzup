@@ -28,3 +28,34 @@ func GetQuiz(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "No Product with ID found"})
 	}
 }
+
+// CreateQuizRequestBody s
+type CreateQuizRequestBody struct {
+	Content []QuestionBody `json:"content"`
+}
+
+// QuestionBody asd
+type QuestionBody struct {
+	QuestionText string       `json:"question"`
+	Options      []OptionBody `json:"options"`
+}
+
+//OptionBody adf
+type OptionBody struct {
+	Option string `json:"option"`
+}
+
+// CreateQuiz creates quiz
+func CreateQuiz(c *gin.Context) {
+	q := CreateQuizRequestBody{}
+	err := c.Bind(&q)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Invalid request",
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Quiz submitted successfully",
+		})
+	}
+}

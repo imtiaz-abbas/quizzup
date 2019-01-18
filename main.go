@@ -50,5 +50,11 @@ func main() {
 	router.GET("/quizzes", controllers.GetAllQuizzes)
 	router.GET("/quizzes/:id", controllers.GetQuiz)
 
+	adminAuthorized := router.Group("/", gin.BasicAuth(gin.Accounts{
+		"admin": "admin",
+	}))
+
+	adminAuthorized.POST("/create_quiz", controllers.CreateQuiz)
+
 	router.Run(":" + port)
 }
