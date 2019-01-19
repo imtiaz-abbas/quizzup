@@ -34,18 +34,40 @@ func GetQuiz(c *gin.Context) {
 
 // CreateQuizRequestBody s
 type CreateQuizRequestBody struct {
+	Name    string         `json:"name"`
 	Content []QuestionBody `json:"content"`
 }
 
 // QuestionBody asd
 type QuestionBody struct {
-	QuestionText string       `json:"question"`
-	Options      []OptionBody `json:"options"`
+	QuestionText  string       `json:"question"`
+	Options       []OptionBody `json:"options"`
+	CorrectOption uint         `json:"correct_option"`
 }
 
 //OptionBody adf
 type OptionBody struct {
 	Option string `json:"option"`
+}
+
+// PostQuizRequestBody sfd
+type PostQuizRequestBody struct {
+	QuizID  uint     `json:"quiz_id"`
+	Answers []Answer `json:"answers"`
+}
+
+// Answer s
+type Answer struct {
+	QuestionID uint `json:"question_id"`
+	Option     uint `json:"option_id"`
+}
+
+// PostQuiz s
+func PostQuiz(c *gin.Context) {
+	// q := PostQuizRequestBody{}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "OK",
+	})
 }
 
 // CreateQuiz creates quiz
@@ -62,8 +84,9 @@ func CreateQuiz(c *gin.Context) {
 			op.OptionText = option.Option
 			options = append(options, op)
 		}
-		questions = append(questions, models.Question{QuestionText: question.QuestionText, Options: options})
+		questions = append(questions, models.Question{QuestionText: question.QuestionText, Options: options, CorrectOption: question.CorrectOption})
 	}
+	data.Name = q.Name
 	data.Questions = questions
 	if err := db.Get().Model(&models.Quiz{}).Create(data).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

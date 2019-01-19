@@ -10,18 +10,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetUsers gets all the user from db
-func GetUsers() []models.User {
-	var users []models.User
+// GetAdminUsers gets all the admin user from db
+func GetAdminUsers() []models.AdminUser {
+	var users []models.AdminUser
 	if err := db.Get().Find(&users).Error; err != nil {
-		return []models.User{}
+		return []models.AdminUser{}
 	}
 	return users
 }
 
-// CreateUser method Creates a User
-func CreateUser(c *gin.Context) {
-	var user models.User
+// CreateAdminUser method Creates a User
+func CreateAdminUser(c *gin.Context) {
+	var user models.AdminUser
 	if err := c.Bind(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Invalid Request",
@@ -41,12 +41,12 @@ func CreateUser(c *gin.Context) {
 	})
 }
 
-// AuthorizeUser d
-func AuthorizeUser() gin.HandlerFunc {
+// AuthorizeAdmin d
+func AuthorizeAdmin() gin.HandlerFunc {
 	accounts := make(map[string]string)
-	var users []models.User
+	var users []models.AdminUser
 	if err := db.Get().Find(&users).Error; err != nil {
-		return gin.BasicAuth(gin.Accounts{"test": "test"})
+		return gin.BasicAuth(gin.Accounts{"admin": "admin"})
 	}
 	for _, user := range users {
 		accounts[user.EmailID] = user.Password
@@ -54,7 +54,7 @@ func AuthorizeUser() gin.HandlerFunc {
 	fmt.Println(" ==== ", users)
 	fmt.Println(" ==== ", accounts)
 	if len(accounts) == 0 {
-		accounts["test"] = "test"
+		accounts["admin"] = "admin"
 	}
 	return gin.BasicAuth(accounts)
 }

@@ -11,6 +11,7 @@ import (
 // Quiz Information
 type Quiz struct {
 	gorm.Model
+	Name      string     `json:"name"`
 	Questions []Question `json:"content"`
 }
 

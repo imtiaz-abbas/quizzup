@@ -17,8 +17,9 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-	// db.Get().DropTableIfExists(&models.Quiz{}, &models.Question{}, &models.Option{}, &models.User{})
-	db.Get().AutoMigrate(&models.Quiz{}, &models.Question{}, &models.Option{}, &models.User{})
+	// db.Get().DropTableIfExists(&models.Quiz{}, &models.Question{}, &models.Option{}, &models.User{}, &models.AdminUser{})
+	// db.Get().CreateTable(&models.Quiz{}, &models.Question{}, &models.Option{}, &models.User{}, &models.AdminUser{})
+	db.Get().AutoMigrate(&models.Quiz{}, &models.Question{}, &models.Option{}, &models.User{}, &models.AdminUser{})
 
 	router := gin.Default()
 	router.Use(gin.Logger())
@@ -27,12 +28,13 @@ func main() {
 	router.GET("/quizzes/:id", controllers.GetQuiz)
 
 	router.POST("/create_user", controllers.CreateUser)
+	router.POST("/create_admin_user", controllers.CreateAdminUser)
 
-	adminAuthorized := router.Group("/", gin.BasicAuth(gin.Accounts{
-		"admin": "admin",
-	}))
-
+	adminAuthorized := router.Group("/", controllers.AuthorizeAdmin())
 	adminAuthorized.POST("/create_quiz", controllers.CreateQuiz)
+
+	userAuthorized := router.Group("/", controllers.AuthorizeUser())
+	userAuthorized.POST("/quiz", controllers.PostQuiz)
 
 	router.Run(":" + port)
 }
