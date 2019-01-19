@@ -1,9 +1,12 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/quizzup/db"
 	"github.com/quizzup/models"
 )
 
@@ -20,8 +23,9 @@ func GetAllQuizzes(c *gin.Context) {
 // GetQuiz gets single product by id
 func GetQuiz(c *gin.Context) {
 	id := c.Param("id")
+	i, _ := strconv.ParseUint(id, 10, 64)
 	quiz := models.Quiz{}
-	statusCode := quiz.GetQuiz(id)
+	statusCode := quiz.GetQuiz(i)
 	if statusCode == 1 {
 		c.JSON(200, quiz)
 	} else {
@@ -48,7 +52,27 @@ type OptionBody struct {
 // CreateQuiz creates quiz
 func CreateQuiz(c *gin.Context) {
 	q := CreateQuizRequestBody{}
+	data := &models.Quiz{}
+	questions := []models.Question{}
+
 	err := c.Bind(&q)
+	for _, question := range q.Content {
+		options := []models.Option{}
+		for _, option := range question.Options {
+			op := models.Option{}
+			op.OptionText = option.Option
+			options = append(options, op)
+		}
+		questions = append(questions, models.Question{QuestionText: question.QuestionText, Options: options})
+	}
+	data.Content = questions
+	fmt.Println(" =====  postin gdata ", *data)
+	if err := db.Get().Model(&models.Quiz{}).Create(data).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Internal Server Error",
+		})
+		return
+	}
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Invalid request",

@@ -1,48 +1,24 @@
 package main
 
 import (
-	"fmt"
 	"os"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/heroku/x/hmetrics/onload"
-	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 	"github.com/quizzup/controllers"
+	"github.com/quizzup/db"
+	"github.com/quizzup/models"
 )
 
-func dbURL() string {
-	var sslmode string
-	sslmode = "sslmode=disable"
-	dbPort, _ := strconv.Atoi(os.Getenv("DBPORT"))
-	return fmt.Sprintf(
-		"host=%s port=%d user=%s dbname=%s password=%s %s",
-		os.Getenv("DBHOST"),
-		dbPort,
-		os.Getenv("DBUSER"),
-		os.Getenv("DBNAME"),
-		os.Getenv("DBPASSWORD"),
-		sslmode,
-	)
-}
-
 func main() {
+
 	port := os.Getenv("PORT")
-	db, err := gorm.Open("postgres", dbURL())
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
-	dbase := db.DB()
-	defer dbase.Close()
-	err = dbase.Ping()
-	if err != nil {
-		panic(err.Error())
-	}
 	if port == "" {
 		port = "8080"
 	}
+
+	db.Get().AutoMigrate(&models.Quiz{}, &models.Question{}, &models.Option{})
 
 	router := gin.Default()
 	router.Use(gin.Logger())
