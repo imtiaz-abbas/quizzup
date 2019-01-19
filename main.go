@@ -17,14 +17,16 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-	db.Get().DropTableIfExists(&models.Quiz{}, &models.Question{}, &models.Option{})
-	db.Get().CreateTable(&models.Quiz{}, &models.Question{}, &models.Option{})
+	db.Get().DropTableIfExists(&models.Quiz{}, &models.Question{}, &models.Option{}, &models.User{})
+	db.Get().CreateTable(&models.Quiz{}, &models.Question{}, &models.Option{}, &models.User{})
 
 	router := gin.Default()
 	router.Use(gin.Logger())
 	router.GET("/", func(c *gin.Context) { c.JSON(200, gin.H{"message": "OK"}) })
 	router.GET("/quizzes", controllers.GetAllQuizzes)
 	router.GET("/quizzes/:id", controllers.GetQuiz)
+
+	router.POST("/create_user", controllers.CreateUser)
 
 	adminAuthorized := router.Group("/", gin.BasicAuth(gin.Accounts{
 		"admin": "admin",

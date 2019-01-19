@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -66,7 +65,6 @@ func CreateQuiz(c *gin.Context) {
 		questions = append(questions, models.Question{QuestionText: question.QuestionText, Options: options})
 	}
 	data.Questions = questions
-	fmt.Println(" =====  postin gdata ", *data)
 	if err := db.Get().Model(&models.Quiz{}).Create(data).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Internal Server Error",

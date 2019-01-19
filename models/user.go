@@ -2,9 +2,7 @@ package models
 
 //User Information
 type User struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	PhoneNumber string `json:"phone_number"`
-	EmailID     string `json:"email_id"`
-	Password    string `json:"password"`
+	Name     string `json:"name"`
+	EmailID  string `json:"email_id" gorm:"primary_key;unique;not null; unique_index"`
+	Password string `json:"password"`
 }
