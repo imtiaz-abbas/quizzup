@@ -8,6 +8,8 @@
 # Main build executable
 .env
 
+db-data/
+
 # Editor backup files
 *~
 .#*

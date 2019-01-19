@@ -5,6 +5,8 @@ services:
     image: postgres:latest
     ports:
       - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=${DBUSER}
       - POSTGRES_PASSWORD=${DBPASSWORD}
@@ -22,3 +24,5 @@ services:
       - "5000:5000"
     depends_on:
       - db
+volumes:
+  db-data:
