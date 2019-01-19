@@ -17,8 +17,8 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-
-	db.Get().AutoMigrate(&models.Quiz{}, &models.Question{}, &models.Option{})
+	db.Get().DropTableIfExists(&models.Quiz{}, &models.Question{}, &models.Option{})
+	db.Get().CreateTable(&models.Quiz{}, &models.Question{}, &models.Option{})
 
 	router := gin.Default()
 	router.Use(gin.Logger())

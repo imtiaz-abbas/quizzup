@@ -3,30 +3,29 @@ package models
 import (
 	"fmt"
 
+	"github.com/jinzhu/gorm"
+
 	"github.com/quizzup/db"
 )
 
 // Quiz Information
 type Quiz struct {
-	ID      uint64     `json:"id" gorm:"primary_key"`
-	Content []Question `json:"content"`
+	gorm.Model
+	Questions []Question `json:"content"`
 }
 
 func getQuizzes() []Quiz {
 	var allQuizzes []Quiz
-	if err := db.Get().Find(&allQuizzes).Error; err != nil {
+	if err := db.Get().Preload("Questions.Options").Find(&allQuizzes).Error; err != nil {
 		fmt.Println("==== error ====", err)
 		return []Quiz{}
 	}
-	fmt.Println("===== found users ")
-	fmt.Println("===== found users ", allQuizzes)
-	fmt.Println("===== found users ")
 	return allQuizzes
 
 }
 
 // GetQuiz gets a Quiz by id
-func (quiz *Quiz) GetQuiz(id uint64) int {
+func (quiz *Quiz) GetQuiz(id uint) int {
 	allQuizzes := getQuizzes()
 	statusCode := 0
 	for _, item := range allQuizzes {

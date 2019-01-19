@@ -2,6 +2,7 @@ package models
 
 // Option struct
 type Option struct {
-	ID         uint64 `json:"id" gorm:"primary_key"`
+	ID         uint   `json:"id"`
 	OptionText string `json:"option"`
+	QuestionID uint   `json:"question_id"`
 }

@@ -23,9 +23,9 @@ func GetAllQuizzes(c *gin.Context) {
 // GetQuiz gets single product by id
 func GetQuiz(c *gin.Context) {
 	id := c.Param("id")
-	i, _ := strconv.ParseUint(id, 10, 64)
+	i, _ := strconv.ParseUint(id, 10, 8)
 	quiz := models.Quiz{}
-	statusCode := quiz.GetQuiz(i)
+	statusCode := quiz.GetQuiz(uint(i))
 	if statusCode == 1 {
 		c.JSON(200, quiz)
 	} else {
@@ -65,7 +65,7 @@ func CreateQuiz(c *gin.Context) {
 		}
 		questions = append(questions, models.Question{QuestionText: question.QuestionText, Options: options})
 	}
-	data.Content = questions
+	data.Questions = questions
 	fmt.Println(" =====  postin gdata ", *data)
 	if err := db.Get().Model(&models.Quiz{}).Create(data).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
