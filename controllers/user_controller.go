@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/quizzup/db"
@@ -51,8 +50,6 @@ func AuthorizeUser() gin.HandlerFunc {
 	for _, user := range users {
 		accounts[user.EmailID] = user.Password
 	}
-	fmt.Println(" ==== ", users)
-	fmt.Println(" ==== ", accounts)
 	if len(accounts) == 0 {
 		accounts["test"] = "test"
 	}

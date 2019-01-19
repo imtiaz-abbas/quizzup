@@ -17,9 +17,7 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-	// db.Get().DropTableIfExists(&models.Quiz{}, &models.Question{}, &models.Option{}, &models.User{}, &models.AdminUser{})
-	// db.Get().CreateTable(&models.Quiz{}, &models.Question{}, &models.Option{}, &models.User{}, &models.AdminUser{})
-	db.Get().AutoMigrate(&models.Quiz{}, &models.Question{}, &models.Option{}, &models.User{}, &models.AdminUser{})
+	db.Get().AutoMigrate(&models.Quiz{}, &models.Question{}, &models.Option{}, &models.User{}, &models.AdminUser{}, &models.Result{})
 
 	router := gin.Default()
 	router.Use(gin.Logger())
@@ -34,7 +32,7 @@ func main() {
 	adminAuthorized.POST("/create_quiz", controllers.CreateQuiz)
 
 	userAuthorized := router.Group("/", controllers.AuthorizeUser())
-	userAuthorized.POST("/quiz", controllers.PostQuiz)
+	userAuthorized.POST("/quiz", controllers.PostResults)
 
 	router.Run(":" + port)
 }

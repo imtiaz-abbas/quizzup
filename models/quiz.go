@@ -13,6 +13,7 @@ type Quiz struct {
 	gorm.Model
 	Name      string     `json:"name"`
 	Questions []Question `json:"content"`
+	Result    []Result   `json:"results"`
 }
 
 func getQuizzes() []Quiz {
