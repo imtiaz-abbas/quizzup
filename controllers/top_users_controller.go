@@ -36,7 +36,7 @@ func GetTopUsers(c *gin.Context) {
 		a = append(a, k)
 	}
 
-	topUser := &models.TopUser{}
+	topUsers := []models.TopUser{}
 
 	sort.Sort(sort.Reverse(sort.IntSlice(a)))
 	for _, k := range a {
@@ -45,22 +45,21 @@ func GetTopUsers(c *gin.Context) {
 			if error := db.Get().Where("id = ?", s).Find(&user).Error; error != nil {
 				c.JSON(http.StatusOK, gin.H{"message": error})
 			}
+			topUser := models.TopUser{}
 			topUser.User = user
 			topUser.Score = k
+			topUsers = append(topUsers, topUser)
 		}
 	}
 
 	fmt.Println(" ==== results in order ", resultsInOrder)
+	fmt.Println(" ==== results in order ", topUsers)
+
 	if len(resultsInOrder) == 0 {
 		c.JSON(http.StatusOK, gin.H{"message": "No Top Users yet"})
 		return
 	}
-	c.JSON(http.StatusOK, topUser)
-	// if err := db.Get().Preload("Results").Find(&users).Error; err != nil {
-	// 	c.JSON(http.StatusOK, gin.H{"message": err})
-	// }
-	// fmt.Println(" ==== ", users)
-	// c.JSON(http.StatusOK, users)
+	c.JSON(http.StatusOK, gin.H{"top_users": topUsers})
 }
 
 // GetTopUsersOfQuiz s
@@ -69,7 +68,21 @@ func GetTopUsersOfQuiz(c *gin.Context) {
 	var quiz models.Quiz
 	if err := db.Get().Preload("Results").Where("id = ?", id).First(&quiz).Order("score asc").Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err})
+		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"top_users": quiz.Results})
+	finalResult := []models.TopUser{}
+	for _, result := range quiz.Results {
+		tUser := models.TopUser{}
+		tUser.Score = result.Score
+		var user models.User
+		if err := db.Get().Where("id = ?", result.UserID).Find(&user).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"message": err})
+			return
+		}
+		tUser.User = user
+		finalResult = append(finalResult, tUser)
+	}
+
+	c.JSON(http.StatusOK, gin.H{"top_users": finalResult})
 }

@@ -18,15 +18,26 @@ func GetUsers() []models.User {
 	return users
 }
 
+// UserInput struct
+type UserInput struct {
+	Name     string `json:"name"`
+	Password string `json:"password"`
+	EmailID  string `json:"email_id"`
+}
+
 // CreateUser method Creates a User
 func CreateUser(c *gin.Context) {
-	var user models.User
-	if err := c.Bind(&user); err != nil {
+	user := &models.User{}
+	var userInput UserInput
+	if err := c.Bind(&userInput); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Invalid Request",
 		})
 		return
 	}
+	user.Name = userInput.Name
+	user.EmailID = userInput.EmailID
+	user.Password = userInput.Password
 
 	if err := db.Get().Create(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -52,6 +63,9 @@ func AuthorizeUser() gin.HandlerFunc {
 	}
 	if len(accounts) == 0 {
 		accounts["test"] = "test"
+		accounts["one"] = "test"
+		accounts["two"] = "test"
+		accounts["three"] = "test"
 	}
 	return gin.BasicAuth(accounts)
 }

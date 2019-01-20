@@ -31,13 +31,15 @@ func PostResults(c *gin.Context) {
 	var user models.User
 	c.Bind(&req)
 
-	if error := db.Get().Preload("Results").Find(&user).Where("email_id = ?", username).Error; error != nil {
+	if error := db.Get().Preload("Results").Where("email_id = ?", username).Find(&user).Error; error != nil {
 		fmt.Println(" ==== unable to find user with username ", username)
 		c.JSON(http.StatusOK, gin.H{
 			"message": "NOT OK",
 		})
 		return
 	}
+
+	fmt.Println(" ==== user while posting results", user.EmailID)
 
 	if len(user.Results) == 0 {
 		createResult(c, req, user)

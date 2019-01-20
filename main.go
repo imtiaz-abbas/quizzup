@@ -19,9 +19,10 @@ func main() {
 	}
 	// db.Get().DropTableIfExists(&models.Quiz{}, &models.Question{}, &models.Option{}, &models.User{}, &models.AdminUser{}, &models.Result{})
 	// db.Get().CreateTable(&models.Quiz{}, &models.Question{}, &models.Option{}, &models.User{}, &models.AdminUser{}, &models.Result{})
-	db.Get().DropTableIfExists(&models.Result{})
-	db.Get().CreateTable(&models.Result{})
-	db.Get().AutoMigrate(&models.Quiz{}, &models.Question{}, &models.Option{}, &models.User{}, &models.AdminUser{})
+	// db.Get().DropTableIfExists(&models.User{})
+	// db.Get().CreateTable(&models.User{})
+	// db.Get().AutoMigrate(&models.Quiz{}, &models.Question{}, &models.Option{}, &models.User{}, &models.AdminUser{})
+	db.Get().AutoMigrate(&models.Quiz{}, &models.Question{}, &models.Option{}, &models.User{}, &models.AdminUser{}, &models.Result{})
 
 	router := gin.Default()
 	router.Use(gin.Logger())
