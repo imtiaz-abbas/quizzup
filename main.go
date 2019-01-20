@@ -34,6 +34,7 @@ func main() {
 
 	router.POST("/create_user", controllers.CreateUser)
 	router.POST("/create_admin_user", controllers.CreateAdminUser)
+	router.POST("/login", controllers.LoginUser)
 
 	adminAuthorized := router.Group("/", controllers.AuthorizeAdmin())
 	adminAuthorized.POST("/create_quiz", controllers.CreateQuiz)

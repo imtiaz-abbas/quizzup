@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/quizzup/db"
 	"github.com/quizzup/models"
 
@@ -68,4 +70,37 @@ func AuthorizeUser() gin.HandlerFunc {
 		accounts["three"] = "test"
 	}
 	return gin.BasicAuth(accounts)
+}
+
+// LoginInput type
+type LoginInput struct {
+	EmailID  string `json:"email_id"`
+	Password string `json:"password"`
+}
+
+// MyClaims s
+type MyClaims struct {
+	User models.User
+	jwt.StandardClaims
+}
+
+// LoginUser s
+func LoginUser(c *gin.Context) {
+	userInput := LoginInput{}
+	c.Bind(&userInput)
+
+	var user models.User
+	if recordNotFound := db.Get().Where("email_id = ? AND password = ?", userInput.EmailID, userInput.Password).Find(&user).RecordNotFound(); recordNotFound {
+		c.JSON(401, gin.H{"error": "Invalid Details"})
+		return
+	}
+
+	fmt.Println(" ==== user ", user.EmailID, user.Password)
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, MyClaims{user, jwt.StandardClaims{
+		ExpiresAt: 15000,
+		Issuer:    "test"}})
+	signedToken, _ := token.SignedString([]byte("secret"))
+
+	c.JSON(200, gin.H{"token": signedToken})
 }
