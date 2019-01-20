@@ -65,5 +65,11 @@ func GetTopUsers(c *gin.Context) {
 
 // GetTopUsersOfQuiz s
 func GetTopUsersOfQuiz(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "Get Top Users of Quiz"})
+	id := c.Param("id")
+	var quiz models.Quiz
+	if err := db.Get().Preload("Results").Where("id = ?", id).First(&quiz).Order("score asc").Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"top_users": quiz.Results})
 }
