@@ -39,7 +39,7 @@ func main() {
 	adminAuthorized := router.Group("/", controllers.AuthorizeAdmin())
 	adminAuthorized.POST("/create_quiz", controllers.CreateQuiz)
 
-	userAuthorized := router.Group("/", controllers.AuthorizeUser())
+	userAuthorized := router.Group("/", controllers.AuthorizeUser)
 	userAuthorized.POST("/quiz", controllers.PostResults)
 
 	router.Run(":" + port)

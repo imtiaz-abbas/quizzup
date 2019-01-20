@@ -24,15 +24,20 @@ type Answer struct {
 
 // PostResults s
 func PostResults(c *gin.Context) {
-	username, _, _ := c.Request.BasicAuth()
+	userID, ok := c.Get("userId")
+	if !ok {
+		c.AbortWithStatus(401)
+		return
+	}
+
 	req := PostQuizRequestBody{}
 	// var users []models.User
-	fmt.Println(" ==== username ", username)
+	fmt.Println(" ==== username ", userID)
 	var user models.User
 	c.Bind(&req)
 
-	if error := db.Get().Preload("Results").Where("email_id = ?", username).Find(&user).Error; error != nil {
-		fmt.Println(" ==== unable to find user with username ", username)
+	if error := db.Get().Preload("Results").Where("id = ?", userID).Find(&user).Error; error != nil {
+		fmt.Println(" ==== unable to find user with id ", userID)
 		c.JSON(http.StatusOK, gin.H{
 			"message": "NOT OK",
 		})
