@@ -13,9 +13,9 @@ import (
 func GetAllQuizzes(c *gin.Context) {
 	err, allQuizzes := models.GetAllQuizzes()
 	if err == 0 {
-		c.JSON(404, gin.H{"error": "Error Finding Products"})
+		c.JSON(404, gin.H{"error": "Error Finding Quizzes"})
 	} else {
-		c.JSON(200, allQuizzes)
+		c.JSON(200, gin.H{"quizzes": allQuizzes})
 	}
 }
 
@@ -28,7 +28,7 @@ func GetQuiz(c *gin.Context) {
 	if statusCode == 1 {
 		c.JSON(200, quiz)
 	} else {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "No Product with ID found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No Quizzes with ID found"})
 	}
 }
 

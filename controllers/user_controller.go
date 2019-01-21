@@ -68,10 +68,17 @@ func AuthorizeUser(c *gin.Context) {
 
 	if claims, ok := token.Claims.(*MyClaims); ok && token.Valid {
 		fmt.Println(claims.UserID)
-		c.Set("userId", claims.UserID)
+		var user models.User
+		if error := db.Get().Preload("Results").Where("id = ?", claims.UserID).Find(&user).Error; error != nil {
+			fmt.Println(" ==== unable to find user with id ", claims.UserID)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "token is invalid"})
+			return
+		}
+		c.Set("user", user)
 		c.Next()
 		return
 	}
+
 	fmt.Println(err)
 	c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "token is invalid"})
 	return
