@@ -14,6 +14,10 @@
 2.  Also install Docker Compose using instructions [here](https://docs.docker.com/compose/install/)
 
 
+### Setting up the environment
+ 
+ Create a file named ```.env```, copy contents from the file ```Sample.env``` to ```.env```
+
 ### Pulling up the application
 
 To pull up the complete application you can run:
