@@ -58,20 +58,23 @@ func CreateUser(c *gin.Context) {
 // AuthorizeUser d
 func AuthorizeUser(c *gin.Context) {
 	tokenString := c.Request.Header.Get("Authorization")
-	fmt.Println(os.Getenv("QUIZZUP_SECRET_KEY"))
 	token, err := jwt.ParseWithClaims(strings.Split(tokenString, " ")[1], &MyClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("QUIZZUP_SECRET_KEY")), nil
 	})
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "token is invalid"})
+		return
+	}
 
 	if claims, ok := token.Claims.(*MyClaims); ok && token.Valid {
 		fmt.Println(claims.UserID)
 		c.Set("userId", claims.UserID)
 		c.Next()
+		return
 	}
 	fmt.Println(err)
-	c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "unauthorized"})
+	c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "token is invalid"})
 	return
-
 }
 
 // LoginInput type
@@ -96,8 +99,6 @@ func LoginUser(c *gin.Context) {
 		c.JSON(401, gin.H{"error": "Invalid Details"})
 		return
 	}
-
-	fmt.Println(" ==== user ", user.EmailID, user.Password)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, MyClaims{user.ID, jwt.StandardClaims{}})
 	signedToken, _ := token.SignedString([]byte(os.Getenv("QUIZZUP_SECRET_KEY")))
