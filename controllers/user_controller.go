@@ -58,6 +58,10 @@ func CreateUser(c *gin.Context) {
 // AuthorizeUser d
 func AuthorizeUser(c *gin.Context) {
 	tokenString := c.Request.Header.Get("Authorization")
+	if tokenString == "" {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "token is invalid"})
+		return
+	}
 	token, err := jwt.ParseWithClaims(strings.Split(tokenString, " ")[1], &MyClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("QUIZZUP_SECRET_KEY")), nil
 	})
@@ -100,7 +104,6 @@ type MyClaims struct {
 func LoginUser(c *gin.Context) {
 	userInput := LoginInput{}
 	c.Bind(&userInput)
-
 	var user models.User
 	if recordNotFound := db.Get().Where("email_id = ? AND password = ?", userInput.EmailID, userInput.Password).Find(&user).RecordNotFound(); recordNotFound {
 		c.JSON(401, gin.H{"error": "Invalid Details"})

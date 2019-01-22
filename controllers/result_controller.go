@@ -43,7 +43,7 @@ func PostResults(c *gin.Context) {
 	for _, result := range user.Results {
 		if result.QuizID == req.QuizID {
 			fmt.Println(" ==== user can attend a quiz only once ===")
-			c.JSON(http.StatusBadRequest, gin.H{
+			c.JSON(http.StatusOK, gin.H{
 				"message": "You can only submit a quiz once",
 			})
 			return
@@ -51,7 +51,7 @@ func PostResults(c *gin.Context) {
 		createResult(c, req, user)
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"message": "OK",
+		"message": "Quiz submitted sucessfully",
 	})
 }
 
